@@ -1,102 +1,111 @@
-const handleDomo = (e) => {
+const handlePost = (e, csrf) => {
     e.preventDefault();
 
-    $("#domoMessage").animate({width:'hide'},350);
+    $("#postMessage").animate({width:'hide'},350);
 
-    if($("#domoName").val() == '' || $("#domoAge").val() == '') {
-        handleError("RAWR! All fields are required");
+    if($("#postBody").val() == '') {
+        handleError("Post text is required");
         return false;
     }
 
-    sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function() {
-        loadDomosFromServer();
+    sendAjax('POST', $("#postForm").attr("action"), $("#postForm").serialize(), function() {
+        loadPostsFromServer(csrf);
     });
 
     return false;
 };
 
-const DomoForm = (props) => {
+const PostForm = (props) => {
     return (
-        <form id="domoForm"
-        onSubmit={handleDomo}
-        name="domoForm"
+        <form id="postForm"
+        onSubmit={(e) => handlePost(e, props.csrf)}
+        name="postForm"
         action="/maker"
         method="POST"
-        className="domoForm"
+        className="postForm"
         >
 
-            <label htmlFor="name">Name: </label>
-            <input id="domoName" type="text" name="name" placeholder="Domo Name"/>
-            <label htmlFor="age">Age: </label>
-            <input id="domoAge" type="text" name="age" placeholder="Domo Age"/>
-            <label htmlFor="size">Size: </label>
-            <input id="domoSize" type="text" name="size" placeholder="Domo Size"/>
+            <label htmlFor="body">Post: </label>
+            <input id="postBody" type="text" name="body" placeholder="Type your post out here"/>
+            <label htmlFor="likes">Likes: </label>
+            <input id="postLikes" type="text" name="likes" placeholder="Placeholder test for like values"/>
             <input type="hidden" name="_csrf" value={props.csrf} />
-            <input className="makeDomoSubmit" type="submit" value="Make Domo" />
+            <input className="makePostSubmit" type="submit" value="Make Post" />
 
         </form>
     );
 };
 
-const DomoList = function(props) {
-    if(props.domos.length === 0) {
+const PostFeed = function(props) {
+    const{csrf = false} = props;
+    if(props.posts.length === 0) {
         return (
-            <div className="domoList">
-                <h3 className="emptyDomo">No Domos yet</h3>
+            <div className="postFeed">
+                <h3 className="emptyPost">No posts found...</h3>
             </div>
         );
     }
 
-    const domoNodes = props.domos.map(function(domo) {
-        console.log(domo);
+    const postNodes = props.posts.map(function(post) {
+        console.log(props);
         return (
-            <div key={domo._id} className="domo">
-                <img src="/assets/img/domoface.jpeg" alt="domo face" className="domoFace" />
-                <h3 className="domoName"> Name: {domo.name} </h3>
-                <h3 className="domoAge"> Age: {domo.age} </h3>
-                <h3 className="domoSize"> Size: {domo.size} </h3>
+            <div key={post._id} className="post">
+                <img src="/assets/img/domoface.jpeg" alt="profile icon" className="profilePic" />
+                <h3 className="postOwner"> Name: {post.owner} </h3>
+                <h3 className="postBody"> {post.body} </h3>
+                <h3 className="postLikes"> Likes: {post.likes} </h3>
+                <button className="likeButton" onClick={
+                    (e) => handleLike(post._id, csrf, e)}>Like this Post
+                </button>
             </div>
         );
     });
 
     return (
-        <div className="domoList">
-            {domoNodes}
+        <div className="postFeed">
+            {postNodes}
         </div>
     );
 };
 
-const loadDomosFromServer = () => {
-    sendAjax('GET', '/getDomos', null, (data) => {
+const handleLike = (id, csrf, e) => {
+    e.preventDefault();
+    console.log("Handling like...");
+
+    sendAjax('POST', '/likePost', `id=${id}&_csrf=${csrf}`, function() {
+        loadPostsFromServer(csrf);
+    });
+};
+
+const loadPostsFromServer = (csrf) => {
+    sendAjax('GET', '/getPosts', null, (data) => {
         ReactDOM.render(
-            <DomoList domos={data.domos} />, document.querySelector("#domos")
+            <PostFeed csrf={csrf} posts={data.posts} />, document.querySelector("#posts")
         );
     });
 };
 
 const setup = (csrf) => {
-    if(!document.querySelector("#makeDomo")) return false;
+    if(!document.querySelector("#makePost")) return false;
     ReactDOM.render(
-        <DomoForm csrf={csrf} />, document.querySelector("#makeDomo")
+        <PostForm csrf={csrf} />, document.querySelector("#makePost")
     );
     
-    console.log("Domo maker: " + document.querySelector("#makeDomo"));
+    console.log("Post maker: " + document.querySelector("#makePost"));
 
     ReactDOM.render(
-        <DomoList domos={[]} />, document.querySelector("#domos")
+        <PostFeed csrf={csrf} posts={[]} />, document.querySelector("#posts")
     );
 
-    loadDomosFromServer();
+    loadPostsFromServer(csrf);
 };
 
 const getToken = () => {
     sendAjax('GET', '/getToken', null, (result) => {
-        console.log("Gettin da token :)");
         setup(result.csrfToken);
     });
 };
 
 $(document).ready(function() {
-    console.log("Ready");
     getToken();
 });

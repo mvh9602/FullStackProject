@@ -5,7 +5,7 @@
     "node": "12.16.0",
     "npm": "6.13.7"
   },
-  "description": "A Simple Login Example using Node.js, Mongo and Redis",
+  "description": "Full stack social media clone project using Node.js, Mongo and Redis",
   "main": "./server/app.js",
   "scripts": {
     "buildLoginBundle": "babel ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js",
@@ -24,7 +24,7 @@
     "Redis",
     "Login"
   ],
-  "author": "Cody Van De Mark",
+  "author": "Matt Hoffman",
   "license": "Apache 2.0",
   "devDependencies": {
     "@babel/cli": "^7.8.4",

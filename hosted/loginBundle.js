@@ -33,6 +33,7 @@ var handleSignup = function handleSignup(e) {
   }
 
   sendAjax('POST', $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect);
+  console.log($("#signupForm").serialize());
   return false;
 };
 

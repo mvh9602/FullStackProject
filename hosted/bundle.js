@@ -1,126 +1,137 @@
 "use strict";
 
-var handleDomo = function handleDomo(e) {
+var handlePost = function handlePost(e, csrf) {
   e.preventDefault();
-  $("#domoMessage").animate({
+  $("#postMessage").animate({
     width: 'hide'
   }, 350);
 
-  if ($("#domoName").val() == '' || $("#domoAge").val() == '') {
-    handleError("RAWR! All fields are required");
+  if ($("#postBody").val() == '') {
+    handleError("Post text is required");
     return false;
   }
 
-  sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
-    loadDomosFromServer();
+  sendAjax('POST', $("#postForm").attr("action"), $("#postForm").serialize(), function () {
+    loadPostsFromServer(csrf);
   });
   return false;
 };
 
-var DomoForm = function DomoForm(props) {
+var PostForm = function PostForm(props) {
   return (/*#__PURE__*/React.createElement("form", {
-      id: "domoForm",
-      onSubmit: handleDomo,
-      name: "domoForm",
+      id: "postForm",
+      onSubmit: function onSubmit(e) {
+        return handlePost(e, props.csrf);
+      },
+      name: "postForm",
       action: "/maker",
       method: "POST",
-      className: "domoForm"
+      className: "postForm"
     }, /*#__PURE__*/React.createElement("label", {
-      htmlFor: "name"
-    }, "Name: "), /*#__PURE__*/React.createElement("input", {
-      id: "domoName",
+      htmlFor: "body"
+    }, "Post: "), /*#__PURE__*/React.createElement("input", {
+      id: "postBody",
       type: "text",
-      name: "name",
-      placeholder: "Domo Name"
+      name: "body",
+      placeholder: "Type your post out here"
     }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "age"
-    }, "Age: "), /*#__PURE__*/React.createElement("input", {
-      id: "domoAge",
+      htmlFor: "likes"
+    }, "Likes: "), /*#__PURE__*/React.createElement("input", {
+      id: "postLikes",
       type: "text",
-      name: "age",
-      placeholder: "Domo Age"
-    }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "size"
-    }, "Size: "), /*#__PURE__*/React.createElement("input", {
-      id: "domoSize",
-      type: "text",
-      name: "size",
-      placeholder: "Domo Size"
+      name: "likes",
+      placeholder: "Placeholder test for like values"
     }), /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "_csrf",
       value: props.csrf
     }), /*#__PURE__*/React.createElement("input", {
-      className: "makeDomoSubmit",
+      className: "makePostSubmit",
       type: "submit",
-      value: "Make Domo"
+      value: "Make Post"
     }))
   );
 };
 
-var DomoList = function DomoList(props) {
-  if (props.domos.length === 0) {
+var PostFeed = function PostFeed(props) {
+  var _props$csrf = props.csrf,
+      csrf = _props$csrf === void 0 ? false : _props$csrf;
+
+  if (props.posts.length === 0) {
     return (/*#__PURE__*/React.createElement("div", {
-        className: "domoList"
+        className: "postFeed"
       }, /*#__PURE__*/React.createElement("h3", {
-        className: "emptyDomo"
-      }, "No Domos yet"))
+        className: "emptyPost"
+      }, "No posts found..."))
     );
   }
 
-  var domoNodes = props.domos.map(function (domo) {
-    console.log(domo);
+  var postNodes = props.posts.map(function (post) {
+    console.log(props);
     return (/*#__PURE__*/React.createElement("div", {
-        key: domo._id,
-        className: "domo"
+        key: post._id,
+        className: "post"
       }, /*#__PURE__*/React.createElement("img", {
         src: "/assets/img/domoface.jpeg",
-        alt: "domo face",
-        className: "domoFace"
+        alt: "profile icon",
+        className: "profilePic"
       }), /*#__PURE__*/React.createElement("h3", {
-        className: "domoName"
-      }, " Name: ", domo.name, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoAge"
-      }, " Age: ", domo.age, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "domoSize"
-      }, " Size: ", domo.size, " "))
+        className: "postOwner"
+      }, " Name: ", post.owner, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "postBody"
+      }, " ", post.body, " "), /*#__PURE__*/React.createElement("h3", {
+        className: "postLikes"
+      }, " Likes: ", post.likes, " "), /*#__PURE__*/React.createElement("button", {
+        className: "likeButton",
+        onClick: function onClick(e) {
+          return handleLike(post._id, csrf, e);
+        }
+      }, "Like this Post"))
     );
   });
   return (/*#__PURE__*/React.createElement("div", {
-      className: "domoList"
-    }, domoNodes)
+      className: "postFeed"
+    }, postNodes)
   );
 };
 
-var loadDomosFromServer = function loadDomosFromServer() {
-  sendAjax('GET', '/getDomos', null, function (data) {
-    ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-      domos: data.domos
-    }), document.querySelector("#domos"));
+var handleLike = function handleLike(id, csrf, e) {
+  e.preventDefault();
+  console.log("Handling like...");
+  sendAjax('POST', '/likePost', "id=".concat(id, "&_csrf=").concat(csrf), function () {
+    loadPostsFromServer(csrf);
+  });
+};
+
+var loadPostsFromServer = function loadPostsFromServer(csrf) {
+  sendAjax('GET', '/getPosts', null, function (data) {
+    ReactDOM.render( /*#__PURE__*/React.createElement(PostFeed, {
+      csrf: csrf,
+      posts: data.posts
+    }), document.querySelector("#posts"));
   });
 };
 
 var setup = function setup(csrf) {
-  if (!document.querySelector("#makeDomo")) return false;
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoForm, {
+  if (!document.querySelector("#makePost")) return false;
+  ReactDOM.render( /*#__PURE__*/React.createElement(PostForm, {
     csrf: csrf
-  }), document.querySelector("#makeDomo"));
-  console.log("Domo maker: " + document.querySelector("#makeDomo"));
-  ReactDOM.render( /*#__PURE__*/React.createElement(DomoList, {
-    domos: []
-  }), document.querySelector("#domos"));
-  loadDomosFromServer();
+  }), document.querySelector("#makePost"));
+  console.log("Post maker: " + document.querySelector("#makePost"));
+  ReactDOM.render( /*#__PURE__*/React.createElement(PostFeed, {
+    csrf: csrf,
+    posts: []
+  }), document.querySelector("#posts"));
+  loadPostsFromServer(csrf);
 };
 
 var getToken = function getToken() {
   sendAjax('GET', '/getToken', null, function (result) {
-    console.log("Gettin da token :)");
     setup(result.csrfToken);
   });
 };
 
 $(document).ready(function () {
-  console.log("Ready");
   getToken();
 });
 "use strict";
