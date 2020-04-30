@@ -17,7 +17,7 @@ html, body {
 nav {
     width: 100%;
     height: 50px;
-    background-color: #55acee;
+    background-color: #55ee85;
 }
 
 nav:nth-child(1) {
@@ -38,22 +38,22 @@ nav:nth-child(1) {
     text-decoration: none;
     padding: 5px;
     border-radius: 4px;
-    background-color: #55acee;
+    background-color: #55ee85;
     transition: background-color 0.4s ease;
 }
 
 .navlink a:hover {
     transition: background-color 0.8s ease;
-    background-color: #66bdff;
+    background-color: #66ffab;
 }
 
 .postForm {
-    border: 2px solid #338acc;
+    border: 2px solid #33cc63;
     height: 35px;
     width: 900px;
     margin-top:0px;
     padding-top:10px;
-    background-color: #55acee;
+    background-color: #55ee85;
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
 }
@@ -75,7 +75,7 @@ nav:nth-child(1) {
     transition: background-color 0.4s ease;
     display: inline;
     width: 90px;
-    background-color: #55acee;
+    background-color: #55ee85;
     border-radius: 2px;
     color: white;
     text-decoration: none;
@@ -87,14 +87,14 @@ nav:nth-child(1) {
 
 .makePostSubmit:hover {
     transition: background-color 0.4s ease;
-    background-color: #338acc;
+    background-color: #33cc63;
 }
 
 .mainForm {
     height: 300px;
     width: 350px;
     margin: 0 auto;
-    padding-top: 350px;
+    padding-top: 25px;
     font-size: 1.2em;
 }
 
@@ -118,10 +118,10 @@ nav:nth-child(1) {
     margin-top: 14px;
     font-size: 1.2em;
     width: 100px;
-    background-color: #55acee;
+    background-color: #55ee85;
     border-radius: 2px;
-    border-color: #66acee;
-    padding: 3px 0px;
+    border-color: #66ee85;
+    padding: 10px 0px;
     color: white;
     text-decoration: none;
 }
@@ -132,7 +132,7 @@ nav:nth-child(1) {
 
 .formSubmit:hover {
     transition: background-color 0.4s ease;
-    background-color: #338acc;
+    background-color: #33cc63;
 }
 
 #user, #pass, #pass2 {
@@ -144,10 +144,10 @@ nav:nth-child(1) {
 
 #user:focus, #pass:focus, #pass2:focus {
     outline: none;
-    box-shadow: 0px 0px 1px 1px #55acee;
+    box-shadow: 0px 0px 1px 1px #55ee85;
 }
 
-#domoMessage {
+#appMessage {
     display:none;
     top: 250px;
     width: 250px;
@@ -158,7 +158,7 @@ nav:nth-child(1) {
     overflow: hidden;
 }
 
-#domoMessage h3 {
+#appMessage h3 {
     width: 200px;
     position: absolute;
     top: 0px;
@@ -174,7 +174,7 @@ nav:nth-child(1) {
 #errorMessage {
     font-size: 1.2em;
     font-weight: bold;
-    color: red;
+    color: white;
     font-style: italic;
 }
 
@@ -192,7 +192,7 @@ nav:nth-child(1) {
 #posts {
     width: 40%;
     min-width: 400px;
-    border: 2px solid #55acee;
+    border: 2px solid #55ee85;
     border-radius: 4px;
     margin: 0 auto;
     margin-top: 100px;
@@ -203,9 +203,9 @@ nav:nth-child(1) {
     margin: 0 auto;
     margin-top: 2px;
     margin-bottom: 2px;
-    border: 2px solid #55acee;
+    border: 2px solid #55ee85;
     border-radius: 4px;
-    background-color: #55acee;
+    background-color: #55ee85;
     padding: 10px;
     min-height:60px;
     overflow: hidden;
@@ -215,7 +215,7 @@ nav:nth-child(1) {
     transition: border-color 0.2s ease-out;
     border-color: rgba(255,255,255, 0.8);
     transition: background-color 2.6s ease-out;
-    background-color: #66bfff;
+    background-color: #66ffab;
 }
 
 img.profilePic {

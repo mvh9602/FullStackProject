@@ -8,6 +8,7 @@ const iterations = 10000;
 const saltLength = 64;
 const keyLength = 64;
 
+// model for account objects in database
 const AccountSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -16,6 +17,7 @@ const AccountSchema = new mongoose.Schema({
     unique: true,
     match: /^[A-Za-z0-9_\-.]{1,16}$/,
   },
+  // encryption tool
   salt: {
     type: Buffer,
     required: true,

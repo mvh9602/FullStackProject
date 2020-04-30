@@ -1,13 +1,20 @@
+// Sets the text of an alert and animates it coming out of the left side of the screen
 const handleError = (message) => {
     $("#errorMessage").text(message);
-    $("#domoMessage").animate({width:'toggle'}, 350);
+    $("#appMessage").animate({width:'toggle'}, 350);
 };
 
+// Sets the current user in local storage and redirects to the given location
+// This method of passing the user id can cause a desync between server and client
+//      on the logged in state. I was unable to find any solutions that didn't take
+//      me down a rabbit hole.
 const redirect = (response) => {
-    $("#domoMessage").animate({width:'hide'}, 350);
+    $("#appMessage").animate({width:'hide'}, 350);
+    localStorage.setItem('userInfo', response.userId);
     window.location = response.redirect;
 };
 
+// Parses data from requests on the client and sends them to the server
 const sendAjax = (type, action, data, success) => {
     $.ajax({
         cache: false,

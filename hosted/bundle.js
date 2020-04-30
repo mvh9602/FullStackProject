@@ -11,9 +11,7 @@ var handlePost = function handlePost(e, csrf) {
     return false;
   }
 
-  sendAjax('POST', $("#postForm").attr("action"), $("#postForm").serialize(), function () {
-    loadPostsFromServer(csrf);
-  });
+  sendAjax('POST', $("#postForm").attr("action"), $("#postForm").serialize(), redirect);
   return false;
 };
 
@@ -29,18 +27,12 @@ var PostForm = function PostForm(props) {
       className: "postForm"
     }, /*#__PURE__*/React.createElement("label", {
       htmlFor: "body"
-    }, "Post: "), /*#__PURE__*/React.createElement("input", {
+    }, "Post: "), /*#__PURE__*/React.createElement("textarea", {
+      className: "form-control",
       id: "postBody",
-      type: "text",
       name: "body",
-      placeholder: "Type your post out here"
-    }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "likes"
-    }, "Likes: "), /*#__PURE__*/React.createElement("input", {
-      id: "postLikes",
-      type: "text",
-      name: "likes",
-      placeholder: "Placeholder test for like values"
+      placeholder: "Type your post out here",
+      rows: "3"
     }), /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "_csrf",
@@ -53,76 +45,14 @@ var PostForm = function PostForm(props) {
   );
 };
 
-var PostFeed = function PostFeed(props) {
-  var _props$csrf = props.csrf,
-      csrf = _props$csrf === void 0 ? false : _props$csrf;
-
-  if (props.posts.length === 0) {
-    return (/*#__PURE__*/React.createElement("div", {
-        className: "postFeed"
-      }, /*#__PURE__*/React.createElement("h3", {
-        className: "emptyPost"
-      }, "No posts found..."))
-    );
-  }
-
-  var postNodes = props.posts.map(function (post) {
-    console.log(props);
-    return (/*#__PURE__*/React.createElement("div", {
-        key: post._id,
-        className: "post"
-      }, /*#__PURE__*/React.createElement("img", {
-        src: "/assets/img/domoface.jpeg",
-        alt: "profile icon",
-        className: "profilePic"
-      }), /*#__PURE__*/React.createElement("h3", {
-        className: "postOwner"
-      }, " Name: ", post.owner, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "postBody"
-      }, " ", post.body, " "), /*#__PURE__*/React.createElement("h3", {
-        className: "postLikes"
-      }, " Likes: ", post.likes, " "), /*#__PURE__*/React.createElement("button", {
-        className: "likeButton",
-        onClick: function onClick(e) {
-          return handleLike(post._id, csrf, e);
-        }
-      }, "Like this Post"))
-    );
-  });
-  return (/*#__PURE__*/React.createElement("div", {
-      className: "postFeed"
-    }, postNodes)
-  );
-};
-
-var handleLike = function handleLike(id, csrf, e) {
-  e.preventDefault();
-  console.log("Handling like...");
-  sendAjax('POST', '/likePost', "id=".concat(id, "&_csrf=").concat(csrf), function () {
-    loadPostsFromServer(csrf);
-  });
-};
-
-var loadPostsFromServer = function loadPostsFromServer(csrf) {
-  sendAjax('GET', '/getPosts', null, function (data) {
-    ReactDOM.render( /*#__PURE__*/React.createElement(PostFeed, {
-      csrf: csrf,
-      posts: data.posts
-    }), document.querySelector("#posts"));
-  });
-};
-
 var setup = function setup(csrf) {
-  if (!document.querySelector("#makePost")) return false;
+  ReactDOM.render( /*#__PURE__*/React.createElement(Header, {
+    csrf: csrf,
+    currentPage: "maker"
+  }), document.querySelector("#nav"));
   ReactDOM.render( /*#__PURE__*/React.createElement(PostForm, {
     csrf: csrf
   }), document.querySelector("#makePost"));
-  console.log("Post maker: " + document.querySelector("#makePost"));
-  ReactDOM.render( /*#__PURE__*/React.createElement(PostFeed, {
-    csrf: csrf,
-    posts: []
-  }), document.querySelector("#posts"));
-  loadPostsFromServer(csrf);
 };
 
 var getToken = function getToken() {
@@ -136,17 +66,79 @@ $(document).ready(function () {
 });
 "use strict";
 
+var Header = function Header(props) {
+  // knows if logged in, logging in, signing up, making post
+  var currentPage = props.currentPage,
+      csrf = props.csrf;
+
+  var handleLogin = function handleLogin(e) {
+    e.preventDefault();
+    createLoginWindow(csrf);
+  };
+
+  var handleSignup = function handleSignup(e) {
+    e.preventDefault();
+    createSignupWindow(csrf);
+  };
+
+  var handleLogout = function handleLogout(e) {
+    e.preventDefault();
+    sendAjax('GET', '/logout', null, redirect);
+  };
+
+  var loginButton = /*#__PURE__*/React.createElement("div", {
+    className: "navlink"
+  }, /*#__PURE__*/React.createElement("a", {
+    onClick: handleLogin,
+    id: "loginButton",
+    href: "/login"
+  }, "Log in"));
+  var signupButton = /*#__PURE__*/React.createElement("div", {
+    className: "navlink"
+  }, /*#__PURE__*/React.createElement("a", {
+    onClick: handleSignup,
+    id: "signupButton",
+    href: "/signup"
+  }, "Sign up"));
+  var backButton = /*#__PURE__*/React.createElement("div", {
+    className: "navlink"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "/"
+  }, "Back"));
+  var makerButton = /*#__PURE__*/React.createElement("div", {
+    className: "navlink"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "/maker"
+  }, "Make a Post"));
+  var logoutButton = /*#__PURE__*/React.createElement("div", {
+    className: "navlink"
+  }, /*#__PURE__*/React.createElement("a", {
+    onClick: handleLogout,
+    href: "/logout"
+  }, "Log out"));
+  return (/*#__PURE__*/React.createElement("nav", null, /*#__PURE__*/React.createElement("a", {
+      href: "/"
+    }, /*#__PURE__*/React.createElement("img", {
+      id: "logo",
+      src: "/assets/img/doc.png",
+      alt: "doc logo"
+    })), currentPage === "loggedOut" && [loginButton, signupButton], currentPage === "login" && [backButton, signupButton], currentPage === "signup" && [backButton, loginButton], currentPage === "loggedIn" && [makerButton, logoutButton], currentPage === "maker" && [backButton, logoutButton])
+  );
+};
+"use strict";
+
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
-  $("#domoMessage").animate({
+  $("#appMessage").animate({
     width: 'toggle'
   }, 350);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({
+  $("#appMessage").animate({
     width: 'hide'
   }, 350);
+  localStorage.setItem('userInfo', response.userId);
   window.location = response.redirect;
 };
 

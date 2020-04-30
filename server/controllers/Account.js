@@ -1,6 +1,6 @@
 const models = require('../models');
 
-const { Account } = models;
+const { Account, ForumPost } = models;
 
 const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
@@ -8,9 +8,10 @@ const loginPage = (req, res) => {
 
 const logout = (req, res) => {
   req.session.destroy();
-  res.redirect('/');
+  res.json({redirect: '/', userId: ""});
 };
 
+// determines if data was entered correctly for logging in
 const login = (request, response) => {
   const req = request;
   const res = response;
@@ -19,7 +20,7 @@ const login = (request, response) => {
   const password = `${req.body.pass}`;
 
   if (!username || !password) {
-    return res.status(400).json({ error: 'RAWR! All fields are required' });
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
   return Account.AccountModel.authenticate(username, password, (err, account) => {
@@ -29,10 +30,11 @@ const login = (request, response) => {
 
     req.session.account = Account.AccountModel.toAPI(account);
 
-    return res.json({ redirect: '/maker' });
+    return res.json({ redirect: '/', userId: req.session.account._id });
   });
 };
 
+// determines if data was correctly entered for signing up
 const signup = (request, response) => {
   const req = request;
   const res = response;
@@ -42,13 +44,14 @@ const signup = (request, response) => {
   req.body.pass2 = `${req.body.pass2}`;
 
   if (!req.body.username || !req.body.pass || !req.body.pass2) {
-    return res.status(400).json({ error: 'RAWR! All fields are required' });
+    return res.status(400).json({ error: 'All fields are required' });
   }
 
   if (req.body.pass !== req.body.pass2) {
-    return res.status(400).json({ error: 'RAWR! Passwords do not match' });
+    return res.status(400).json({ error: 'Passwords do not match' });
   }
 
+  // encryption of user data
   return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
     const accountData = {
       username: req.body.username,
@@ -62,7 +65,7 @@ const signup = (request, response) => {
 
     savePromise.then(() => {
       req.session.account = Account.AccountModel.toAPI(newAccount);
-      return res.json({ redirect: '/maker' });
+      return res.json({ redirect: '/', userId: req.session.account._id });
     });
 
     savePromise.catch((err) => {
@@ -77,6 +80,7 @@ const signup = (request, response) => {
   });
 };
 
+// retrieves a csrfToken from a request
 const getToken = (request, response) => {
   const req = request;
   const res = response;
