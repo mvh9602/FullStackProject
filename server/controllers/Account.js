@@ -1,6 +1,6 @@
 const models = require('../models');
 
-const { Account, ForumPost } = models;
+const { Account } = models;
 
 const loginPage = (req, res) => {
   res.render('login', { csrfToken: req.csrfToken() });
@@ -8,7 +8,7 @@ const loginPage = (req, res) => {
 
 const logout = (req, res) => {
   req.session.destroy();
-  res.json({redirect: '/', userId: ""});
+  res.json({ redirect: '/', userId: '' });
 };
 
 // determines if data was entered correctly for logging in

@@ -19,11 +19,11 @@ const Header = (props) => {
         sendAjax('GET', '/logout', null, redirect);
     };
 
-    const loginButton = <div className="navlink"><a onClick={handleLogin} id="loginButton" href="/login">Log in</a></div>;
-    const signupButton = <div className="navlink"><a onClick={handleSignup} id="signupButton" href="/signup">Sign up</a></div>;
-    const backButton = <div className="navlink"><a href="/">Back</a></div>;
-    const makerButton = <div className="navlink"><a href="/maker">Make a Post</a></div>;
-    const logoutButton = <div className="navlink"><a onClick={handleLogout} href="/logout">Log out</a></div>;
+    const loginButton = <div className="navlink"><a role="button" onClick={handleLogin} id="loginButton" href="/login">Log in</a></div>;
+    const signupButton = <div className="navlink"><a role="button" onClick={handleSignup} id="signupButton" href="/signup">Sign up</a></div>;
+    const backButton = <div className="navlink"><a role="button" href="/">Back</a></div>;
+    const makerButton = <div className="navlink"><a role="button" href="/maker">Make a Post</a></div>;
+    const logoutButton = <div className="navlink"><a role="button" onClick={handleLogout} href="/logout">Log out</a></div>;
 
     // Determines which buttons to show based on the current page
     return (

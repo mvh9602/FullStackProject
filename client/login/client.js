@@ -9,7 +9,7 @@ const handleLogin = (e) => {
         return false;
     }
 
-    console.log($("input[name=_csrf]").val());
+    //console.log($("input[name=_csrf]").val());
 
     sendAjax('POST', $("#loginForm").attr("action"), $("#loginForm").serialize(), redirect);
 
@@ -33,7 +33,7 @@ const handleSignup = (e) => {
     }
 
     sendAjax('POST', $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect);
-    console.log($("#signupForm").serialize());
+    //console.log($("#signupForm").serialize());
 
     return false;
 }
@@ -128,7 +128,6 @@ const getToken = () => {
 
 // Runs when the document is loaded
 $(document).ready(function() {
-    console.log("Login do be ready");
     getToken();
 });
 
@@ -142,8 +141,14 @@ const PostFeed = function(props) {
     const{csrf = false} = props;
     if(props.posts.length === 0) {
         return (
-            <div className="postFeed">
-                <h3 className="emptyPost">No posts found...</h3>
+            <div className="container">
+                <div className="row">
+                    <div className="col"></div>
+                    <div className="postFeed col-6">
+                        <h3 className="emptyPost">No posts found...</h3>
+                    </div>
+                    <div className="col"></div>
+                </div>
             </div>
         );
     }
@@ -154,8 +159,14 @@ const PostFeed = function(props) {
     });
 
     return (
-        <div className="postFeed">
-            {postNodes}
+        <div className="container">
+            <div className="row">
+                <div className="col"></div>
+                <div className="postFeed col-6">
+                    {postNodes}
+                </div>
+                <div className="col"></div>
+            </div>
         </div>
     );
 };
@@ -173,7 +184,6 @@ class PostNode extends React.Component {
     handleDelete(id, csrf, e) {
         e.preventDefault();
         sendAjax('POST', '/deletePost', `id=${id}&_csrf=${csrf}`, () => {
-            console.log("Delete received");
             loadPostsFromServer(csrf);
         });
     }
@@ -192,7 +202,6 @@ class PostNode extends React.Component {
         let likedText = "Like Post";
         let userLiked = false;
         const {likedBy} = this.state;
-        console.log(user);
         // Changes like button text based off whether the current user has liked this post or not
         if(user){
             for(let i = 0; i < likedBy.length; i++){
@@ -200,19 +209,34 @@ class PostNode extends React.Component {
             }
             likedText = (userLiked ? "Unlike Post" : "Like Post");
         }
+        // Changes post's class if it sponsored
+        let postClass = "post container";
+        if(post.isSponsored)
+            postClass = `${postClass} sponsored`;
+
         return (
-            <div key={post._id} className="post">
-                <img src="/assets/img/speech.png" alt="profile icon" className="profilePic" />
-                <h3 className="postOwner"> Name: {post.ownerName} </h3>
-                {user && post.owner === user && <button className="deleteButton" onClick={
-                    (e) => this.handleDelete(post._id, csrf, e)}>x
-                </button>}
-                <h3 className="postBody"> {post.body} </h3>
-                <h3 className="postLikes"> Likes: {likedBy.length} </h3>
-                {user && <button className="likeButton" onClick={
-                    (e) => this.handleLike(post._id, csrf, e)}>{likedText}
-                </button>
-                }
+            <div key={post._id} className={postClass}>
+                <div className="row justify-content-end">
+                    <img src="/assets/img/speech.png" alt="profile icon" className="profilePic col-2" />
+                    <h3 className="postOwner col-6"> Name: {post.ownerName} </h3>
+                    <div className="col">
+                    {user && post.owner === user && <button className="deleteButton btn btn-dark" onClick={
+                        (e) => this.handleDelete(post._id, csrf, e)}>x
+                    </button>}
+                    </div>
+                </div>
+                <div className="row-6">
+                    <div className="col-2"></div>
+                    <h3 className="postBody col-7"> {post.body} </h3>
+                </div>
+                <div className="row justify-content-start">
+                    <h3 className="postLikes col"> Likes: {likedBy.length} </h3>
+                    <div className="col-4">
+                    {user && <button className="likeButton btn btn-light" onClick={
+                        (e) => this.handleLike(post._id, csrf, e)}>{likedText}
+                    </button>}
+                    </div>
+                </div>
             </div>
         );
 

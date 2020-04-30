@@ -26,6 +26,7 @@ const makePost = (req, res) => {
     likes: 0,
     owner: req.session.account._id,
     ownerName: req.session.account.username,
+    isSponsored: req.body.sponsored === 'on',
   };
 
   const newPost = new ForumPost.PostModel(postData);
@@ -46,7 +47,6 @@ const makePost = (req, res) => {
 
 // returns the list of posts
 const getPosts = (request, response) => {
-  const req = request;
   const res = response;
 
   return ForumPost.PostModel.findAll((err, docs) => {
@@ -61,56 +61,56 @@ const getPosts = (request, response) => {
 
 // asynchronously removes a given post from the database
 const deletePost = async (req, res) => {
-  try{
+  try {
     // wait until post is removed before continuing
-  const deletedPost = await ForumPost.PostModel.deleteByPostId(req.body.id, req.session.account);
-  console.log(deletedPost);
-  res.status(204).json({deleted: true});
+    await ForumPost.PostModel.deleteByPostId(req.body.id, req.session.account);
+    res.status(204).json({ deleted: true });
   } catch (err) {
-    res.status(400).json({ error: 'Error deleting post'});
+    res.status(400).json({ error: 'Error deleting post' });
   }
-}
+};
 
 // asynchronously likes a post from the given post and user ids
 const likePost = async (req, res) => {
-  try{
+  try {
   // waits for post to be found before continuing
-  const likedPost = await ForumPost.PostModel.findByPostId(req.body.id);
+    const likedPost = await ForumPost.PostModel.findByPostId(req.body.id);
 
-  // owner index is used to determine if user has already liked, stays -1 if not
-  let ownerIndex = -1;
+    // owner index is used to determine if user has already liked, stays -1 if not
+    let ownerIndex = -1;
 
-  // autmatically like post if there are no likes yet
-  // if there are likes, search to see if given user has liked
-  // if the haven't liked, add them to the list
-  // if they have liked, remove them from the list (unlike)
-  if(likedPost.likedBy.length === 0){
-    likedPost.likedBy.push(req.session.account._id);
-  } else {
-    for(let i = 0; i < likedPost.likedBy.length; i++){
-      if(req.session.account._id === likedPost.likedBy[i]){
-        ownerIndex = i;
-      }
-    }
-    if(ownerIndex === -1){
+    // autmatically like post if there are no likes yet
+    // if there are likes, search to see if given user has liked
+    // if the haven't liked, add them to the list
+    // if they have liked, remove them from the list (unlike)
+    if (likedPost.likedBy.length === 0) {
       likedPost.likedBy.push(req.session.account._id);
     } else {
-      likedPost.likedBy.splice(ownerIndex, 1);
+      for (let i = 0; i < likedPost.likedBy.length; i++) {
+        if (req.session.account._id === likedPost.likedBy[i]) {
+          ownerIndex = i;
+        }
+      }
+      if (ownerIndex === -1) {
+        likedPost.likedBy.push(req.session.account._id);
+      } else {
+        likedPost.likedBy.splice(ownerIndex, 1);
+      }
     }
-  }
 
-  // client must also determine if current user liked each post, so that data is sent back
-  likedPost.likes = likedPost.likedBy.length;
-  const savePromise = likedPost.save();
-  savePromise.then(() => res.status(200).json({ 
-    body: likedPost.body, 
-    likes: likedPost.likes, 
-    likedBy: likedPost.likedBy,
-    owner: likedPost.owner,
-    userLiked: (ownerIndex === -1)
-  }));
+    // client must also determine if current user liked each post, so that data is sent back
+    likedPost.likes = likedPost.likedBy.length;
+    const savePromise = likedPost.save();
+    savePromise.then(() => res.status(200).json({
+      body: likedPost.body,
+      likes: likedPost.likes,
+      likedBy: likedPost.likedBy,
+      owner: likedPost.owner,
+      userLiked: (ownerIndex === -1),
+      isSponsored: likedPost.isSponsored,
+    }));
 
-  savePromise.catch((err) => res.status(500).json({ err }));
+    savePromise.catch((err) => res.status(500).json({ err }));
   } catch (err) {
     res.status(400).json({ error: 'Error liking post' });
   }

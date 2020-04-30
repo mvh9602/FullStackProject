@@ -1,5 +1,6 @@
 "use strict";
 
+// Sends a POST when a post is created (I got confused many times)
 var handlePost = function handlePost(e, csrf) {
   e.preventDefault();
   $("#postMessage").animate({
@@ -13,10 +14,19 @@ var handlePost = function handlePost(e, csrf) {
 
   sendAjax('POST', $("#postForm").attr("action"), $("#postForm").serialize(), redirect);
   return false;
-};
+}; // React component for the post text entry
+
 
 var PostForm = function PostForm(props) {
-  return (/*#__PURE__*/React.createElement("form", {
+  return (/*#__PURE__*/React.createElement("div", {
+      className: "container"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row justify-content-start"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "col"
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "col-6"
+    }, /*#__PURE__*/React.createElement("form", {
       id: "postForm",
       onSubmit: function onSubmit(e) {
         return handlePost(e, props.csrf);
@@ -33,7 +43,17 @@ var PostForm = function PostForm(props) {
       name: "body",
       placeholder: "Type your post out here",
       rows: "3"
-    }), /*#__PURE__*/React.createElement("input", {
+    }), /*#__PURE__*/React.createElement("label", {
+      className: "form-check-label labelSml",
+      htmlFor: "sponsored"
+    }, "Is this post an ad? "), /*#__PURE__*/React.createElement("input", {
+      type: "checkbox",
+      className: "form-check-input",
+      id: "sponsoredCheck",
+      name: "sponsored"
+    }), /*#__PURE__*/React.createElement("span", {
+      className: "block"
+    }, /*#__PURE__*/React.createElement("input", {
       type: "hidden",
       name: "_csrf",
       value: props.csrf
@@ -41,9 +61,12 @@ var PostForm = function PostForm(props) {
       className: "makePostSubmit",
       type: "submit",
       value: "Make Post"
-    }))
+    })))), /*#__PURE__*/React.createElement("div", {
+      className: "col"
+    })))
   );
-};
+}; // Renders the nav and post form
+
 
 var setup = function setup(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(Header, {
@@ -53,19 +76,22 @@ var setup = function setup(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(PostForm, {
     csrf: csrf
   }), document.querySelector("#makePost"));
-};
+}; // GET request for the csrf token
+
 
 var getToken = function getToken() {
   sendAjax('GET', '/getToken', null, function (result) {
     setup(result.csrfToken);
   });
-};
+}; // Runs when the document is loaded
+
 
 $(document).ready(function () {
   getToken();
 });
 "use strict";
 
+// React component for the navigation header
 var Header = function Header(props) {
   // knows if logged in, logging in, signing up, making post
   var currentPage = props.currentPage,
@@ -79,7 +105,8 @@ var Header = function Header(props) {
   var handleSignup = function handleSignup(e) {
     e.preventDefault();
     createSignupWindow(csrf);
-  };
+  }; // Solves an issue of log out button not redirecting properly
+
 
   var handleLogout = function handleLogout(e) {
     e.preventDefault();
@@ -89,6 +116,7 @@ var Header = function Header(props) {
   var loginButton = /*#__PURE__*/React.createElement("div", {
     className: "navlink"
   }, /*#__PURE__*/React.createElement("a", {
+    role: "button",
     onClick: handleLogin,
     id: "loginButton",
     href: "/login"
@@ -96,6 +124,7 @@ var Header = function Header(props) {
   var signupButton = /*#__PURE__*/React.createElement("div", {
     className: "navlink"
   }, /*#__PURE__*/React.createElement("a", {
+    role: "button",
     onClick: handleSignup,
     id: "signupButton",
     href: "/signup"
@@ -103,19 +132,23 @@ var Header = function Header(props) {
   var backButton = /*#__PURE__*/React.createElement("div", {
     className: "navlink"
   }, /*#__PURE__*/React.createElement("a", {
+    role: "button",
     href: "/"
   }, "Back"));
   var makerButton = /*#__PURE__*/React.createElement("div", {
     className: "navlink"
   }, /*#__PURE__*/React.createElement("a", {
+    role: "button",
     href: "/maker"
   }, "Make a Post"));
   var logoutButton = /*#__PURE__*/React.createElement("div", {
     className: "navlink"
   }, /*#__PURE__*/React.createElement("a", {
+    role: "button",
     onClick: handleLogout,
     href: "/logout"
-  }, "Log out"));
+  }, "Log out")); // Determines which buttons to show based on the current page
+
   return (/*#__PURE__*/React.createElement("nav", null, /*#__PURE__*/React.createElement("a", {
       href: "/"
     }, /*#__PURE__*/React.createElement("img", {
@@ -127,12 +160,17 @@ var Header = function Header(props) {
 };
 "use strict";
 
+// Sets the text of an alert and animates it coming out of the left side of the screen
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
   $("#appMessage").animate({
     width: 'toggle'
   }, 350);
-};
+}; // Sets the current user in local storage and redirects to the given location
+// This method of passing the user id can cause a desync between server and client
+//      on the logged in state. I was unable to find any solutions that didn't take
+//      me down a rabbit hole.
+
 
 var redirect = function redirect(response) {
   $("#appMessage").animate({
@@ -140,7 +178,8 @@ var redirect = function redirect(response) {
   }, 350);
   localStorage.setItem('userInfo', response.userId);
   window.location = response.redirect;
-};
+}; // Parses data from requests on the client and sends them to the server
+
 
 var sendAjax = function sendAjax(type, action, data, success) {
   $.ajax({

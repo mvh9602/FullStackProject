@@ -48,12 +48,10 @@ nav:nth-child(1) {
 }
 
 .postForm {
-    border: 2px solid #33cc63;
-    height: 35px;
-    width: 900px;
+    /*height: 35px;
+    width: 900px;*/
     margin-top:0px;
     padding-top:10px;
-    background-color: #55ee85;
     border-bottom-right-radius: 4px;
     border-top-right-radius: 4px;
 }
@@ -64,16 +62,29 @@ nav:nth-child(1) {
     margin-left: 10px;
     font-size: 1.2em;
     float: left;
-    color: white;
+    color: #55ee85;
+}
+
+.postForm .labelSml {
+    width: 120px;
+    font-size: 0.9em;
 }
 
 .postForm input[type=text] {
     float:left;
 }
 
+.postForm input[type=checkbox] {
+    display: block;
+}
+
+.block {
+    display: block;
+}
+
 .makePostSubmit {
     transition: background-color 0.4s ease;
-    display: inline;
+    display: block;
     width: 90px;
     background-color: #55ee85;
     border-radius: 2px;
@@ -91,10 +102,10 @@ nav:nth-child(1) {
 }
 
 .mainForm {
-    height: 300px;
+    height: 175px;
     width: 350px;
     margin: 0 auto;
-    padding-top: 25px;
+    padding-top: 50px;
     font-size: 1.2em;
 }
 
@@ -190,7 +201,7 @@ nav:nth-child(1) {
 }
 
 #posts {
-    width: 40%;
+    /*width: 40%;*/
     min-width: 400px;
     border: 2px solid #55ee85;
     border-radius: 4px;
@@ -199,16 +210,21 @@ nav:nth-child(1) {
 }
 
 .post {
-    width: 95%;
+    width: 98%;
     margin: 0 auto;
     margin-top: 2px;
-    margin-bottom: 2px;
+    margin-bottom: 35px;
     border: 2px solid #55ee85;
     border-radius: 4px;
     background-color: #55ee85;
     padding: 10px;
+    padding-bottom: 30px;
     min-height:60px;
     overflow: hidden;
+}
+
+.sponsored {
+    border-color: black;
 }
 
 .post:hover {
@@ -225,7 +241,7 @@ img.profilePic {
     width: 50px;
     border-radius: 4px;
     margin-top:10px;
-    float:left;
+    /*float:left;*/
 }
 
 h3.emptyPost {
@@ -237,20 +253,29 @@ h3.emptyPost {
 }
 
 h3.postOwner {
-    float:left;
-    width: 200px;
+    /*float:left;
+    width: 200px;*/
     font-weight: bold;
-    padding-left: 65px;
-    font-size: 1.5em;
+    padding-left: 5px;
+    font-size: 1.2em;
 }
 
 h3.postBody {
-    float:right;
+    /*float:right;*/
     text-align: left;
-    width: 100px;
-    font-weight: bold;
-    padding-right: 40px;
-    font-size: 1.5em;
+    /*width: 100px;
+    font-weight: bold;*/
+    padding-right: 5px;
+    padding-left: 25px;
+    font-size: 0.9em;
+}
+
+.postLikes {
+    font-size: 1em;
+}
+
+.likeButton {
+    /*float: left;*/
 }
 
 .post:first-child {

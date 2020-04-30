@@ -18,6 +18,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+// makes a POST for logging in when login button is pressed
 var handleLogin = function handleLogin(e) {
   e.preventDefault();
   $("#appMessage").animate({
@@ -27,12 +28,13 @@ var handleLogin = function handleLogin(e) {
   if ($("#user").val() == '' || $("#pass").val() == '') {
     handleError("Username or password is empty");
     return false;
-  }
+  } //console.log($("input[name=_csrf]").val());
 
-  console.log($("input[name=_csrf]").val());
+
   sendAjax('POST', $("#loginForm").attr("action"), $("#loginForm").serialize(), redirect);
   return false;
-};
+}; // makes a POST for signing up when signup button is pressed
+
 
 var handleSignup = function handleSignup(e) {
   e.preventDefault();
@@ -50,10 +52,11 @@ var handleSignup = function handleSignup(e) {
     return false;
   }
 
-  sendAjax('POST', $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect);
-  console.log($("#signupForm").serialize());
+  sendAjax('POST', $("#signupForm").attr("action"), $("#signupForm").serialize(), redirect); //console.log($("#signupForm").serialize());
+
   return false;
-};
+}; // React component for the pop-up login window
+
 
 var LoginWindow = function LoginWindow(props) {
   return (/*#__PURE__*/React.createElement("form", {
@@ -87,7 +90,8 @@ var LoginWindow = function LoginWindow(props) {
       value: "Sign in"
     }))
   );
-};
+}; // React component for the pop-up signup window
+
 
 var SignupWindow = function SignupWindow(props) {
   return (/*#__PURE__*/React.createElement("form", {
@@ -128,7 +132,8 @@ var SignupWindow = function SignupWindow(props) {
       value: "Sign Up"
     }))
   );
-};
+}; // Renders the login and appropriate nav React
+
 
 var createLoginWindow = function createLoginWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(Header, {
@@ -138,7 +143,8 @@ var createLoginWindow = function createLoginWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(LoginWindow, {
     csrf: csrf
   }), document.querySelector("#content"));
-};
+}; // Renders the signup and appropriate nav React
+
 
 var createSignupWindow = function createSignupWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(Header, {
@@ -148,36 +154,38 @@ var createSignupWindow = function createSignupWindow(csrf) {
   ReactDOM.render( /*#__PURE__*/React.createElement(SignupWindow, {
     csrf: csrf
   }), document.querySelector("#content"));
-};
+}; // Renders the page and determines if a user is signed in or not
+
 
 var setup = function setup(csrf) {
   var currentPage = getUserInfo() ? "loggedIn" : "loggedOut";
   ReactDOM.render( /*#__PURE__*/React.createElement(Header, {
     csrf: csrf,
     currentPage: currentPage
-  }), document.querySelector("#nav")); //createLoginWindow(csrf);
-
+  }), document.querySelector("#nav"));
   ReactDOM.render( /*#__PURE__*/React.createElement(PostFeed, {
     csrf: csrf,
     posts: []
   }), document.querySelector("#posts"));
   loadPostsFromServer(csrf);
-};
+}; // GET request for the csrf token
+
 
 var getToken = function getToken() {
   sendAjax('GET', '/getToken', null, function (result) {
     setup(result.csrfToken);
   });
-};
+}; // Runs when the document is loaded
+
 
 $(document).ready(function () {
-  console.log("Login do be ready");
   getToken();
-});
+}); // Helper function for checking locally stored logged in user id
 
 var getUserInfo = function getUserInfo() {
   return localStorage.getItem('userInfo');
-};
+}; // React component for list of posts, maps post nodes to itself
+
 
 var PostFeed = function PostFeed(props) {
   var _props$csrf = props.csrf,
@@ -185,10 +193,18 @@ var PostFeed = function PostFeed(props) {
 
   if (props.posts.length === 0) {
     return (/*#__PURE__*/React.createElement("div", {
-        className: "postFeed"
+        className: "container"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "row"
+      }, /*#__PURE__*/React.createElement("div", {
+        className: "col"
+      }), /*#__PURE__*/React.createElement("div", {
+        className: "postFeed col-6"
       }, /*#__PURE__*/React.createElement("h3", {
         className: "emptyPost"
-      }, "No posts found..."))
+      }, "No posts found...")), /*#__PURE__*/React.createElement("div", {
+        className: "col"
+      })))
     );
   }
 
@@ -202,10 +218,19 @@ var PostFeed = function PostFeed(props) {
     );
   });
   return (/*#__PURE__*/React.createElement("div", {
-      className: "postFeed"
-    }, postNodes)
+      className: "container"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "row"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "col"
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "postFeed col-6"
+    }, postNodes), /*#__PURE__*/React.createElement("div", {
+      className: "col"
+    })))
   );
-};
+}; // React class for posts, displays relevent info, dynamically creates like and delete buttons
+
 
 var PostNode = /*#__PURE__*/function (_React$Component) {
   _inherits(PostNode, _React$Component);
@@ -215,30 +240,31 @@ var PostNode = /*#__PURE__*/function (_React$Component) {
 
     _classCallCheck(this, PostNode);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(PostNode).call(this, props));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(PostNode).call(this, props)); // setting class state to likedBy for access/re-rendering
+
     _this.state = {
       likedBy: props.post.likedBy
     };
     _this.handleLike = _this.handleLike.bind(_assertThisInitialized(_this));
     return _this;
-  }
+  } // Deletes a post when the user clicks the delete button, only the user who made the post can delete it
+
 
   _createClass(PostNode, [{
     key: "handleDelete",
     value: function handleDelete(id, csrf, e) {
       e.preventDefault();
       sendAjax('POST', '/deletePost', "id=".concat(id, "&_csrf=").concat(csrf), function () {
-        console.log("Delete received");
         loadPostsFromServer(csrf);
       });
-    }
+    } // Likes a post if the user clicks the like button, unlikes if user already clicked like before
+
   }, {
     key: "handleLike",
     value: function handleLike(id, csrf, e) {
       var _this2 = this;
 
-      e.preventDefault(); //console.log(this);
-
+      e.preventDefault();
       sendAjax('POST', '/likePost', "id=".concat(id, "&_csrf=").concat(csrf), function (data) {
         _this2.setState({
           likedBy: data.likedBy
@@ -256,8 +282,7 @@ var PostNode = /*#__PURE__*/function (_React$Component) {
           csrf = _this$props.csrf;
       var likedText = "Like Post";
       var userLiked = false;
-      var likedBy = this.state.likedBy;
-      console.log(user);
+      var likedBy = this.state.likedBy; // Changes like button text based off whether the current user has liked this post or not
 
       if (user) {
         for (var i = 0; i < likedBy.length; i++) {
@@ -265,38 +290,54 @@ var PostNode = /*#__PURE__*/function (_React$Component) {
         }
 
         likedText = userLiked ? "Unlike Post" : "Like Post";
-      }
+      } // Changes post's class if it sponsored
 
+
+      var postClass = "post container";
+      if (post.isSponsored) postClass = "".concat(postClass, " sponsored");
       return (/*#__PURE__*/React.createElement("div", {
           key: post._id,
-          className: "post"
+          className: postClass
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "row justify-content-end"
         }, /*#__PURE__*/React.createElement("img", {
           src: "/assets/img/speech.png",
           alt: "profile icon",
-          className: "profilePic"
+          className: "profilePic col-2"
         }), /*#__PURE__*/React.createElement("h3", {
-          className: "postOwner"
-        }, " Name: ", post.ownerName, " "), user && post.owner === user && /*#__PURE__*/React.createElement("button", {
-          className: "deleteButton",
+          className: "postOwner col-6"
+        }, " Name: ", post.ownerName, " "), /*#__PURE__*/React.createElement("div", {
+          className: "col"
+        }, user && post.owner === user && /*#__PURE__*/React.createElement("button", {
+          className: "deleteButton btn btn-dark",
           onClick: function onClick(e) {
             return _this3.handleDelete(post._id, csrf, e);
           }
-        }, "x"), /*#__PURE__*/React.createElement("h3", {
-          className: "postBody"
-        }, " ", post.body, " "), /*#__PURE__*/React.createElement("h3", {
-          className: "postLikes"
-        }, " Likes: ", likedBy.length, " "), user && /*#__PURE__*/React.createElement("button", {
-          className: "likeButton",
+        }, "x"))), /*#__PURE__*/React.createElement("div", {
+          className: "row-6"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "col-2"
+        }), /*#__PURE__*/React.createElement("h3", {
+          className: "postBody col-7"
+        }, " ", post.body, " ")), /*#__PURE__*/React.createElement("div", {
+          className: "row justify-content-start"
+        }, /*#__PURE__*/React.createElement("h3", {
+          className: "postLikes col"
+        }, " Likes: ", likedBy.length, " "), /*#__PURE__*/React.createElement("div", {
+          className: "col-4"
+        }, user && /*#__PURE__*/React.createElement("button", {
+          className: "likeButton btn btn-light",
           onClick: function onClick(e) {
             return _this3.handleLike(post._id, csrf, e);
           }
-        }, likedText))
+        }, likedText))))
       );
     }
   }]);
 
   return PostNode;
-}(React.Component);
+}(React.Component); // Requests posts from the server, then renders them in the post feed
+
 
 var loadPostsFromServer = function loadPostsFromServer(csrf) {
   sendAjax('GET', '/getPosts', null, function (data) {
@@ -308,6 +349,7 @@ var loadPostsFromServer = function loadPostsFromServer(csrf) {
 };
 "use strict";
 
+// React component for the navigation header
 var Header = function Header(props) {
   // knows if logged in, logging in, signing up, making post
   var currentPage = props.currentPage,
@@ -321,7 +363,8 @@ var Header = function Header(props) {
   var handleSignup = function handleSignup(e) {
     e.preventDefault();
     createSignupWindow(csrf);
-  };
+  }; // Solves an issue of log out button not redirecting properly
+
 
   var handleLogout = function handleLogout(e) {
     e.preventDefault();
@@ -331,6 +374,7 @@ var Header = function Header(props) {
   var loginButton = /*#__PURE__*/React.createElement("div", {
     className: "navlink"
   }, /*#__PURE__*/React.createElement("a", {
+    role: "button",
     onClick: handleLogin,
     id: "loginButton",
     href: "/login"
@@ -338,6 +382,7 @@ var Header = function Header(props) {
   var signupButton = /*#__PURE__*/React.createElement("div", {
     className: "navlink"
   }, /*#__PURE__*/React.createElement("a", {
+    role: "button",
     onClick: handleSignup,
     id: "signupButton",
     href: "/signup"
@@ -345,19 +390,23 @@ var Header = function Header(props) {
   var backButton = /*#__PURE__*/React.createElement("div", {
     className: "navlink"
   }, /*#__PURE__*/React.createElement("a", {
+    role: "button",
     href: "/"
   }, "Back"));
   var makerButton = /*#__PURE__*/React.createElement("div", {
     className: "navlink"
   }, /*#__PURE__*/React.createElement("a", {
+    role: "button",
     href: "/maker"
   }, "Make a Post"));
   var logoutButton = /*#__PURE__*/React.createElement("div", {
     className: "navlink"
   }, /*#__PURE__*/React.createElement("a", {
+    role: "button",
     onClick: handleLogout,
     href: "/logout"
-  }, "Log out"));
+  }, "Log out")); // Determines which buttons to show based on the current page
+
   return (/*#__PURE__*/React.createElement("nav", null, /*#__PURE__*/React.createElement("a", {
       href: "/"
     }, /*#__PURE__*/React.createElement("img", {
@@ -369,12 +418,17 @@ var Header = function Header(props) {
 };
 "use strict";
 
+// Sets the text of an alert and animates it coming out of the left side of the screen
 var handleError = function handleError(message) {
   $("#errorMessage").text(message);
   $("#appMessage").animate({
     width: 'toggle'
   }, 350);
-};
+}; // Sets the current user in local storage and redirects to the given location
+// This method of passing the user id can cause a desync between server and client
+//      on the logged in state. I was unable to find any solutions that didn't take
+//      me down a rabbit hole.
+
 
 var redirect = function redirect(response) {
   $("#appMessage").animate({
@@ -382,7 +436,8 @@ var redirect = function redirect(response) {
   }, 350);
   localStorage.setItem('userInfo', response.userId);
   window.location = response.redirect;
-};
+}; // Parses data from requests on the client and sends them to the server
+
 
 var sendAjax = function sendAjax(type, action, data, success) {
   $.ajax({

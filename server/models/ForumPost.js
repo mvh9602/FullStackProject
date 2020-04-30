@@ -40,6 +40,12 @@ const PostSchema = new mongoose.Schema({
     required: true,
   },
 
+  // whether or not the post is an ad
+  isSponsored: {
+    type: Boolean,
+    required: true,
+  },
+
   // time post was made
   createdData: {
     type: Date,
@@ -54,12 +60,11 @@ PostSchema.statics.toAPI = (doc) => ({
   likedBy: doc.likedBy,
   owner: doc.owner,
   ownerName: doc.ownerName,
+  isSponsored: doc.isSponsored,
 });
 
 // returns all posts
-PostSchema.statics.findAll = (callback) => {
-  return PostModel.find().exec(callback);
-}
+PostSchema.statics.findAll = (callback) => PostModel.find().exec(callback);
 
 // returns posts made by provided account id
 PostSchema.statics.findByOwner = (ownerId, callback) => {
@@ -71,14 +76,12 @@ PostSchema.statics.findByOwner = (ownerId, callback) => {
 };
 
 // returns post with given post id
-PostSchema.statics.findByPostId = async (postId) => {
-  return PostModel.findById(postId);
-};
+PostSchema.statics.findByPostId = async (postId) => PostModel.findById(postId);
 
 // removes post with given post id
-PostSchema.statics.deleteByPostId = async (postId, account) => {
-  return PostModel.deleteOne({_id: postId, owner: account._id});
-}
+PostSchema.statics.deleteByPostId = async (postId, account) => PostModel.deleteOne({
+  _id: postId, owner: account._id,
+});
 
 PostModel = mongoose.model('Post', PostSchema);
 
