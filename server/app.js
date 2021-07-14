@@ -46,7 +46,7 @@ const redisClient = redis.createClient({
   password: redisPASS,
 });
 
-const router = require('./router.js');
+const router = require('./router');
 
 const app = express();
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
