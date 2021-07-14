@@ -2,8 +2,8 @@
   "name": "Logins",
   "version": "1.0.0",
   "engines": {
-    "node": "12.16.0",
-    "npm": "6.13.7"
+    "node": "12.18.3",
+    "npm": "6.13.0"
   },
   "description": "Full stack social media clone project using Node.js, Mongo and Redis",
   "main": "./server/app.js",
