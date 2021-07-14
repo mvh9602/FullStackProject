@@ -1,2 +1,2 @@
-module.exports.Account = require('./Account.js');
-module.exports.ForumPost = require('./ForumPost.js');
+module.exports.Account = require('./Account');
+module.exports.ForumPost = require('./ForumPost');
