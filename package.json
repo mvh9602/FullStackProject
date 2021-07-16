@@ -1,5 +1,5 @@
 {
-  "name": "Logins",
+  "name": "logins",
   "version": "1.0.0",
   "engines": {
     "node": "12.16.0",
@@ -25,11 +25,11 @@
     "Login"
   ],
   "author": "Matt Hoffman",
-  "license": "Apache 2.0",
+  "license": "UNLICENSED",
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.8.7",
-    "@babel/preset-env": "^7.8.7",
+    "@babel/preset-env": "^7.14.7",
     "@babel/preset-react": "^7.9.4",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
@@ -51,5 +51,13 @@
     "redis": "^3.0.2",
     "serve-favicon": "^2.5.0",
     "underscore": "^1.9.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mvh9602/FullStackProject.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mvh9602/FullStackProject/issues"
+  },
+  "homepage": "https://github.com/mvh9602/FullStackProject#readme"
 }
