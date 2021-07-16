@@ -34,12 +34,12 @@ let redisURL = {
 };
 
 let redisPASS = 'aT3heGFglRMZpPHAbjyXoTgI3pUyBG3J';
-
+/*
 if (process.env.REDISCLOUD_URL) {
   redisURL = url.parse(process.env.REDISCLOUD_URL);
   // eslint-disable-next-line
   redisPASS = redisURL.auth.split(':')[1];
-}
+}*/
 const redisClient = redis.createClient({
   host: redisURL.hostname,
   port: redisURL.port,
