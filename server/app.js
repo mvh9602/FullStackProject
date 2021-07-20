@@ -46,6 +46,8 @@ const redisClient = redis.createClient({
   password: redisPASS,
 });
 
+console.log("Redis connection: " + redisClient.connected);
+
 const router = require('./router');
 
 const app = express();
