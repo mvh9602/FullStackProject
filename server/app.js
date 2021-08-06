@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const expressHandlebars = require('express-handlebars');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
-const redis = require('redis');
+const Redis = require("ioredis");
 const csrf = require('csurf');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
@@ -22,19 +22,19 @@ const mongooseOptions = {
 
 console.debug(process.env.REDIS_URL);
 
-const redisClient = redis.createClient(process.env.REDIS_URL);
+const redisClient = new Redis(process.env.REDIS_URL);
 
 redisClient.on("error", (...args) => {
   console.error(args);
 });
-
-console.log("Redis connection: " + redisClient.connected);
 
 const router = require('./router');
 
 (async () => {
   try {
     console.log(dbURL);
+    await redisClient.connect();
+    console.log("Redis connection: " + redisClient.connected);
     await mongoose.connect(dbURL, mongooseOptions);
   
     const app = express();
