@@ -14,7 +14,7 @@ const csrf = require('csurf');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const dbURL = process.env.MONGODB_URI || 'mongodb+srv://16hoffma:Seven77Seven!@full-stack-project.30yar.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+const dbURL = process.env.MONGODB_URI || 'mongodb+srv://16hoffma:Seven77Seven@full-stack-project.30yar.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 
 const mongooseOptions = {
   useNewUrlParser: true,
@@ -34,11 +34,7 @@ if (process.env.REDISCLOUD_URL) {
   //redisPASS = redisURL.auth.split(':')[1];
   console.log("Redis auth: " + redisURL.auth);
 }
-const redisClient = redis.createClient({
-  host: redisURL.hostname,
-  port: redisURL.port,
-  password: redisPASS,
-});
+const redisClient = redis.createClient(process.env.REDIS_URL);
 
 redisClient.on("error", (...args) => {
   console.error(args);
