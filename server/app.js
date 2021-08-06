@@ -31,6 +31,7 @@ redisClient.on("connect", () => {
 
 const router = require('./router');
 
+// creates app with all required technologies, asynchronously connects to mongoDB Atlas
 (async () => {
   try {
     await mongoose.connect(dbURL, mongooseOptions);

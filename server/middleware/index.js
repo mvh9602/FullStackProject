@@ -8,12 +8,6 @@ const requiresLogin = (req, res, next) => {
 
 // multiple pages use logged in users, so this method does nothing in the meantime
 const requiresLogout = (req, res, next) => {
-/*
-  if (req.session.account) {
-    return res.redirect('/maker');
-  }
-  */
-
   next();
 };
 

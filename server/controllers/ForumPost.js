@@ -46,9 +46,7 @@ const makePost = (req, res) => {
 };
 
 // returns the list of posts
-const getPosts = (request, response) => {
-  const res = response;
-
+const getPosts = (req, res) => {
   return ForumPost.PostModel.findAll((err, docs) => {
     if (err) {
       console.log(err);
@@ -115,7 +113,6 @@ const likePost = async (req, res) => {
     res.status(400).json({ error: 'Error liking post' });
   }
 };
-
 
 module.exports.makerPage = makerPage;
 module.exports.make = makePost;
