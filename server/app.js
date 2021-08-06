@@ -28,12 +28,15 @@ redisClient.on("error", (...args) => {
   console.error(args);
 });
 
+redisClient.on("connect", () => {
+  console.log("Redis connected");
+})
+
 const router = require('./router');
 
 (async () => {
   try {
     console.log(dbURL);
-    await redisClient.connect();
     console.log("Redis connection: " + redisClient.connected);
     await mongoose.connect(dbURL, mongooseOptions);
   
