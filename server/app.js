@@ -8,12 +8,11 @@ const mongoose = require('mongoose');
 const expressHandlebars = require('express-handlebars');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
-const url = require('url');
 const redis = require('redis');
 const csrf = require('csurf');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
-
+console.debug(process.env.MONGODB_URI);
 const dbURL = process.env.MONGODB_URI || 'mongodb+srv://16hoffma:Seven77Seven@full-stack-project.30yar.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 
 const mongooseOptions = {
@@ -21,19 +20,8 @@ const mongooseOptions = {
   useUnifiedTopology: true,
 };
 
-let redisURL = {
-  hostname: 'redis-13822.c276.us-east-1-2.ec2.cloud.redislabs.com',
-  port: '13822',
-};
+console.debug(process.env.REDIS_URL);
 
-let redisPASS = 'aT3heGFglRMZpPHAbjyXoTgI3pUyBG3J';
-
-if (process.env.REDISCLOUD_URL) {
-  redisURL = url.parse(process.env.REDISCLOUD_URL);
-  // eslint-disable-next-line
-  //redisPASS = redisURL.auth.split(':')[1];
-  console.log("Redis auth: " + redisURL.auth);
-}
 const redisClient = redis.createClient(process.env.REDIS_URL);
 
 redisClient.on("error", (...args) => {
