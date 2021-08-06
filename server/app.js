@@ -12,15 +12,12 @@ const Redis = require("ioredis");
 const csrf = require('csurf');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
-console.debug(process.env.MONGODB_URI);
-const dbURL = process.env.MONGODB_URI || 'mongodb+srv://16hoffma:Seven77Seven@full-stack-project.30yar.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/ForumProject';
 
 const mongooseOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };
-
-console.debug(process.env.REDIS_URL);
 
 const redisClient = new Redis(process.env.REDIS_URL);
 
@@ -36,8 +33,6 @@ const router = require('./router');
 
 (async () => {
   try {
-    console.log(dbURL);
-    console.log("Redis connection: " + redisClient.connected);
     await mongoose.connect(dbURL, mongooseOptions);
   
     const app = express();
